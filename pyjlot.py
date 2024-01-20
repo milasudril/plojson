@@ -137,6 +137,10 @@ def gen_plot(plot_file):
 
 	return matplotlib.pyplot.gcf()
 
+def render_plot(plot, opts):
+	print(opts)
+	matplotlib.pyplot.show()
+
 def fetch_args(argv):
 	parser = argparse.ArgumentParser(
 		prog = 'pyjlot',
@@ -146,7 +150,7 @@ def fetch_args(argv):
 	parser.add_argument('--options', type=json.loads, nargs='?')
 	parser.add_argument('filename', nargs='?')
 	args = parser.parse_args()
-	ret = {}
+	ret = {'options':{}}
 	if args.filename != None:
 		ret['input'] = args.filename
 	if args.options != None:
@@ -165,8 +169,9 @@ if __name__ == '__main__':
 	try:
 		args = fetch_args(sys.argv)
 		plot_file = load_file(args)
-		if gen_plot(plot_file) != None:
-			matplotlib.pyplot.show()
+		res = gen_plot(plot_file)
+		if res != None:
+			render_plot(res, args['options'])
 
 	except Exception as e:
 		e = sys.exc_info()
