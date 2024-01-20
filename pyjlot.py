@@ -3,6 +3,7 @@
 import json
 import matplotlib.pyplot
 import sys
+import argparse
 
 def eprint(*args, **kwargs):
 	print(*args, file=sys.stderr, **kwargs)
@@ -137,12 +138,21 @@ def gen_plot(plot_file):
 	return matplotlib.pyplot.gcf()
 
 def fetch_args(argv):
-	if len(argv) < 2:
-		return {}
-	elif len(argv) == 2:
-		return json.loads(argv[1])
-	else:
-		return None
+	parser = argparse.ArgumentParser(
+		prog = 'pyjlot',
+		description = 'Renders a pyjlot file'
+	)
+
+	parser.add_argument('--options', type=json.loads, nargs='?')
+	parser.add_argument('filename', nargs='?')
+	args = parser.parse_args()
+	ret = {}
+	if args.filename != None:
+		ret['input'] = args.filename
+	if args.options != None:
+		ret['options'] = args.options
+	
+	return ret
 
 def load_file(args):
 	if 'input' in args:
@@ -154,10 +164,6 @@ def load_file(args):
 if __name__ == '__main__':
 	try:
 		args = fetch_args(sys.argv)
-		if args == None:
-			eprint('Expected a string containing json data as the single command line argument')
-			exit(1)
-
 		plot_file = load_file(args)
 		if gen_plot(plot_file) != None:
 			matplotlib.pyplot.show()
