@@ -13,30 +13,36 @@ def gen_plot(plot_file):
 		eprint('Input file does not contain any curves')
 		return None
 
+	curve_num = 0
 	for item in plot_file['curves']:
+		label = item.get('label', '')
+		curve_id = label if label != '' else str(curve_num)
+
 		if not 'data_points' in item:
-			eprint('Item has no data points')
+			eprint('error: Curve `%s` has no `data_points`'%curve_id)
 			return None
 
 		data_points = item['data_points']
 
 		if not 'x' in data_points:
-			eprint('There are no x values in data_points')
+			eprint('error: Curve `%s` has no `x` values in `data_points`'%curve_id)
 			return None
 
 		if not 'y' in data_points:
-			eprint('There are no y values in data_points')
+			eprint('error: Curve `%s` has no `y` values in `data_points`'%curve_id)
 			return None
 
 		x = data_points['x']
 		y = data_points['y']
 
 		if len(x) != len(y):
-			eprint('x and y has different lengths')
+			eprint('error: Curve `%s` has different `x` and `y` has different lengths: %d vs %d'
+				%(curve_id, len(x), len(y)))
 			return None
 
 		legend.append(item.get('label', ''))
 		matplotlib.pyplot.plot(x, y)
+		curve_num = curve_num + 1
 
 	if all(map(lambda v: v=='', '')):
 		matplotlib.pyplot.legend(legend)
@@ -53,7 +59,7 @@ def gen_plot(plot_file):
 		elif ratio == 'scaled':
 			matplotlib.pyplot.axis('scaled')
 		else:
-			eprint('Usupported axis ratio %s'%ratio)
+			eprint('Usupported axis ratio')
 			return None
 
 		if 'x' in axes_config:
@@ -70,7 +76,7 @@ def gen_plot(plot_file):
 				matplotlib.pyplot.xscale('log', base = log_base)
 
 			else:
-				eprint('Unsupported scale %s'%x_scale_type)
+				eprint('error: `x` axis has an unsupported scale')
 				return None
 
 			if 'grid_lines' in x:
@@ -101,7 +107,7 @@ def gen_plot(plot_file):
 				matplotlib.pyplot.yscale('log', base = log_base)
 
 			else:
-				eprint('Unsupported scale %s'%y_scale_type)
+				eprint('error: `y` axis has an unsupported scale')
 				return None
 
 			if 'grid_lines' in y:
@@ -128,6 +134,6 @@ if __name__ == '__main__':
 		with open(sys.argv[1], 'r') as input:
 			plot_file = json.load(input)
 
-	gen_plot(plot_file)
-	matplotlib.pyplot.show()
+	if gen_plot(plot_file) != None:
+		matplotlib.pyplot.show()
 
