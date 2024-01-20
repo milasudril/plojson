@@ -136,13 +136,33 @@ def gen_plot(plot_file):
 
 	return matplotlib.pyplot.gcf()
 
-if __name__ == '__main__':
-	if len(sys.argv) < 2:
-		plot_file = json.load(sys.stdin)
+def fetch_args(argv):
+	if len(argv) < 2:
+		return {}
+	elif len(argv) == 2:
+		return json.loads(argv[1])
 	else:
-		with open(sys.argv[1], 'r') as input:
-			plot_file = json.load(input)
+		return None
 
-	if gen_plot(plot_file) != None:
-		matplotlib.pyplot.show()
+def load_file(args):
+	if 'input' in args:
+		with open(args['input'], 'r') as input:
+			return json.load(input)
+	else:
+		return json.load(sys.stdin)
 
+if __name__ == '__main__':
+	try:
+		args = fetch_args(sys.argv)
+		if args == None:
+			eprint('Expected a string containing json data as the single command line argument')
+			exit(1)
+
+		plot_file = load_file(args)
+		if gen_plot(plot_file) != None:
+			matplotlib.pyplot.show()
+
+	except Exception as e:
+		e = sys.exc_info()
+		eprint('error: %s %s %s'%(type(e), e[0], e[1]))
+		exit(1)
