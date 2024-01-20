@@ -54,7 +54,7 @@ def gen_plot(plot_file):
 		matplotlib.pyplot.plot(x, y)
 		curve_num = curve_num + 1
 
-	if all(map(lambda v: v=='', '')):
+	if not all(map(lambda v: v=='', legend)):
 		matplotlib.pyplot.legend(legend)
 
 
