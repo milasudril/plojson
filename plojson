@@ -167,8 +167,8 @@ def render_plot(plot, opts):
 
 def fetch_args(argv):
 	parser = argparse.ArgumentParser(
-		prog = 'pyjlot',
-		description = 'Renders a pyjlot file'
+		prog = 'plojson',
+		description = 'Renders a plojson file'
 	)
 
 	parser.add_argument('--options', type=json.loads, nargs='?')
