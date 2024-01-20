@@ -138,8 +138,32 @@ def gen_plot(plot_file):
 	return matplotlib.pyplot.gcf()
 
 def render_plot(plot, opts):
-	print(opts)
-	matplotlib.pyplot.show()
+	renderer = opts.get('renderer',{})
+	renderer_name = renderer.get('name', 'default_ui')
+	if renderer_name == 'default_ui':
+		matplotlib.pyplot.show()
+	elif renderer_name == 'png_writer':
+		renderer_opts = renderer.get('options', {})
+		output = renderer_opts.get('output', sys.stdout.buffer)
+		resolution = renderer_opts.get('resolution_dpi', 100)
+		if 'width_px' in renderer_opts:
+			plot.set_figwidth(renderer_opts['width_px']/resolution)
+		if 'height_px' in renderer_opts:
+			plot.set_figheight(renderer_opts['height_px']/resolution)
+		plot.tight_layout()
+		plot.savefig(output, format = 'png', dpi = resolution)
+	elif renderer_name == 'svg_writer':
+		renderer_opts = renderer.get('options', {})
+		output = renderer_opts.get('output', sys.stdout.buffer)
+		resolution = renderer_opts.get('resolution_dpi', 100)
+		if 'width_px' in renderer_opts:
+			plot.set_figwidth(renderer_opts['width_px']/resolution)
+		if 'height_px' in renderer_opts:
+			plot.set_figheight(renderer_opts['height_px']/resolution)
+		plot.tight_layout()
+		plot.savefig(output, format = 'svg', dpi = resolution)
+	else:
+		eprint('Unsupported renderer')
 
 def fetch_args(argv):
 	parser = argparse.ArgumentParser(
