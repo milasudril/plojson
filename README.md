@@ -4,6 +4,8 @@ This is a simple script that creates a plot from data stored in a json file.
 
 ## Plot document structure
 
+Below is a specification of the document format. For examples, see the examples directory.
+
 ### Document element
 
 * `curves` is an array hoding multiple [`curve`](#curve) objects. Currently, this element is mandatory and must contain at least one element.
