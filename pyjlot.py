@@ -10,7 +10,13 @@ def eprint(*args, **kwargs):
 def gen_plot(plot_file):
 	legend = []
 	if not 'curves' in plot_file:
-		eprint('Input file does not contain any curves')
+		eprint('Input file does not contain any `curves`')
+		return None
+	
+	curves = plot_file['curves']
+
+	if len(curves) == 0:
+		eprint('Input file has an empty array of curves')
 		return None
 
 	curve_num = 0
@@ -40,6 +46,9 @@ def gen_plot(plot_file):
 				%(curve_id, len(x), len(y)))
 			return None
 
+		if len(x) == 0:
+			eprint('error: Curve `%s` has a zero length'%curve_id)
+
 		legend.append(item.get('label', ''))
 		matplotlib.pyplot.plot(x, y)
 		curve_num = curve_num + 1
@@ -51,10 +60,10 @@ def gen_plot(plot_file):
 	if 'axes_config' in plot_file:
 		axes_config = plot_file['axes_config']
 
-		ratio = axes_config.get('ratio', 'independent')
+		ratio = axes_config.get('ratio', 'auto')
 		if ratio == 'equal':
 			matplotlib.pyplot.axis('equal')
-		elif ratio == 'independent':
+		elif ratio == 'auto':
 			matplotlib.pyplot.axis('auto')
 		elif ratio == 'scaled':
 			matplotlib.pyplot.axis('scaled')
